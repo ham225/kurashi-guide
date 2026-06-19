@@ -254,6 +254,7 @@ def main():
     args = parser.parse_args()
 
     config = load_json(DATA / "config.json", {})
+    ARTICLES.mkdir(parents=True, exist_ok=True)  # 空だとGitに無い場合があるので必ず用意
     if args.build_only:
         build_site(config)
         return
