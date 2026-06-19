@@ -1,0 +1,26 @@
+:root{--bg:#faf8f4;--ink:#2b2b2b;--accent:#c4622d;--card:#fff;--line:#e7e0d4}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+background:var(--bg);color:var(--ink);line-height:1.8}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.site-header{background:#fff;border-bottom:1px solid var(--line);padding:18px 20px;text-align:center}
+.site-title{font-size:1.3rem;font-weight:700;color:var(--ink)}
+.site-tagline{margin:6px 0 0;font-size:.8rem;color:#777}
+.container{max-width:720px;margin:0 auto;padding:24px 18px}
+.index-h1{font-size:1.5rem}.index-lead{color:#555}
+.card-list{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.card a{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:16px 18px;color:var(--ink)}
+.card a:hover{border-color:var(--accent);text-decoration:none}
+.card-title{display:block;font-weight:700;font-size:1.05rem}
+.card-desc{display:block;color:#666;font-size:.85rem;margin:6px 0}
+.card-date{display:block;color:#aaa;font-size:.75rem}
+.count{color:#999;font-size:.8rem;text-align:center;margin-top:24px}
+article h1{font-size:1.5rem;line-height:1.4}
+.crumb{font-size:.8rem;color:#999}.meta{color:#999;font-size:.8rem}
+.tags{margin:8px 0 20px}.tag{display:inline-block;background:#f0e9dd;color:#8a6a45;
+font-size:.72rem;padding:3px 8px;border-radius:20px;margin-right:6px}
+.article-body h2{border-left:5px solid var(--accent);padding-left:12px;margin-top:34px;font-size:1.2rem}
+.article-body h3{margin-top:24px;font-size:1.05rem}
+.article-body ul,.article-body ol{padding-left:1.4em}
+.back{margin-top:40px}
+.site-footer{border-top:1px solid var(--line);padding:24px 18px;text-align:center;color:#999;font-size:.78rem}

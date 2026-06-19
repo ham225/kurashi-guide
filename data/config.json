@@ -1,0 +1,8 @@
+{
+  "site_title": "暮らしのやり方ガイド",
+  "site_description": "毎日の「これ、どうやるの？」をやさしく解決する実用ガイド集。掃除・洗濯・収納・料理のコツを丁寧に紹介します。",
+  "site_url": "https://USERNAME.github.io/kurashi-guide",
+  "author": "暮らしのやり方ガイド編集部",
+  "articles_per_run": 3,
+  "model": "claude-sonnet-4-6"
+}
