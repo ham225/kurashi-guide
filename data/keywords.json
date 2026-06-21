@@ -88,5 +88,265 @@
     "id": 18,
     "query": "部屋の湿気対策",
     "status": "todo"
+  },
+  {
+    "id": 19,
+    "query": "換気扇の油汚れの落とし方",
+    "status": "todo"
+  },
+  {
+    "id": 20,
+    "query": "トイレの黄ばみの落とし方",
+    "status": "todo"
+  },
+  {
+    "id": 21,
+    "query": "電子レンジの臭いの取り方",
+    "status": "todo"
+  },
+  {
+    "id": 22,
+    "query": "シンクの水垢の落とし方",
+    "status": "todo"
+  },
+  {
+    "id": 23,
+    "query": "蛇口の水垢を取る方法",
+    "status": "todo"
+  },
+  {
+    "id": 24,
+    "query": "網戸の掃除のやり方",
+    "status": "todo"
+  },
+  {
+    "id": 25,
+    "query": "カーテンの洗い方",
+    "status": "todo"
+  },
+  {
+    "id": 26,
+    "query": "エアコンのフィルター掃除のやり方",
+    "status": "todo"
+  },
+  {
+    "id": 27,
+    "query": "床のベタつきを取る方法",
+    "status": "todo"
+  },
+  {
+    "id": 28,
+    "query": "鏡のウロコ取りの方法",
+    "status": "todo"
+  },
+  {
+    "id": 29,
+    "query": "ガスコンロの掃除のやり方",
+    "status": "todo"
+  },
+  {
+    "id": 30,
+    "query": "洗濯機の掃除のやり方",
+    "status": "todo"
+  },
+  {
+    "id": 31,
+    "query": "畳の掃除のやり方",
+    "status": "todo"
+  },
+  {
+    "id": 32,
+    "query": "壁紙の汚れの落とし方",
+    "status": "todo"
+  },
+  {
+    "id": 33,
+    "query": "フローリングのワックスのかけ方",
+    "status": "todo"
+  },
+  {
+    "id": 34,
+    "query": "白いシャツの襟汚れの落とし方",
+    "status": "todo"
+  },
+  {
+    "id": 35,
+    "query": "血液のシミの落とし方",
+    "status": "todo"
+  },
+  {
+    "id": 36,
+    "query": "油性ペンの落とし方",
+    "status": "todo"
+  },
+  {
+    "id": 37,
+    "query": "コーヒーのシミの落とし方",
+    "status": "todo"
+  },
+  {
+    "id": 38,
+    "query": "セーターの毛玉の取り方",
+    "status": "todo"
+  },
+  {
+    "id": 39,
+    "query": "ニットの洗濯のやり方",
+    "status": "todo"
+  },
+  {
+    "id": 40,
+    "query": "タオルのゴワゴワを直す方法",
+    "status": "todo"
+  },
+  {
+    "id": 41,
+    "query": "洗濯物を早く乾かす方法",
+    "status": "todo"
+  },
+  {
+    "id": 42,
+    "query": "ダウンジャケットの洗い方",
+    "status": "todo"
+  },
+  {
+    "id": 43,
+    "query": "上履きの洗い方",
+    "status": "todo"
+  },
+  {
+    "id": 44,
+    "query": "黄ばんだ枕の洗い方",
+    "status": "todo"
+  },
+  {
+    "id": 45,
+    "query": "小さい部屋の収納アイデア",
+    "status": "todo"
+  },
+  {
+    "id": 46,
+    "query": "本の収納アイデア",
+    "status": "todo"
+  },
+  {
+    "id": 47,
+    "query": "書類の整理のコツ",
+    "status": "todo"
+  },
+  {
+    "id": 48,
+    "query": "冷凍庫の整理のコツ",
+    "status": "todo"
+  },
+  {
+    "id": 49,
+    "query": "キッチンの収納アイデア",
+    "status": "todo"
+  },
+  {
+    "id": 50,
+    "query": "洗面所の収納アイデア",
+    "status": "todo"
+  },
+  {
+    "id": 51,
+    "query": "子供のおもちゃの収納アイデア",
+    "status": "todo"
+  },
+  {
+    "id": 52,
+    "query": "コードの収納方法",
+    "status": "todo"
+  },
+  {
+    "id": 53,
+    "query": "ご飯がべちゃべちゃになった時の対処法",
+    "status": "todo"
+  },
+  {
+    "id": 54,
+    "query": "野菜の保存方法",
+    "status": "todo"
+  },
+  {
+    "id": 55,
+    "query": "卵の賞味期限の見分け方",
+    "status": "todo"
+  },
+  {
+    "id": 56,
+    "query": "だしの取り方の基本",
+    "status": "todo"
+  },
+  {
+    "id": 57,
+    "query": "米の研ぎ方の基本",
+    "status": "todo"
+  },
+  {
+    "id": 58,
+    "query": "焦げ付かないフライパンの使い方",
+    "status": "todo"
+  },
+  {
+    "id": 59,
+    "query": "保存容器の臭いの取り方",
+    "status": "todo"
+  },
+  {
+    "id": 60,
+    "query": "魚焼きグリルの掃除のやり方",
+    "status": "todo"
+  },
+  {
+    "id": 61,
+    "query": "結露を防ぐ方法",
+    "status": "todo"
+  },
+  {
+    "id": 62,
+    "query": "部屋の乾燥対策",
+    "status": "todo"
+  },
+  {
+    "id": 63,
+    "query": "クーラーの効きを良くする方法",
+    "status": "todo"
+  },
+  {
+    "id": 64,
+    "query": "コバエの駆除方法",
+    "status": "todo"
+  },
+  {
+    "id": 65,
+    "query": "ゴキブリを寄せ付けない方法",
+    "status": "todo"
+  },
+  {
+    "id": 66,
+    "query": "靴をきれいに保つ方法",
+    "status": "todo"
+  },
+  {
+    "id": 67,
+    "query": "冬の窓の寒さ対策",
+    "status": "todo"
+  },
+  {
+    "id": 68,
+    "query": "夏の暑さ対策の節電",
+    "status": "todo"
+  },
+  {
+    "id": 69,
+    "query": "観葉植物の植え替えのやり方",
+    "status": "todo"
+  },
+  {
+    "id": 70,
+    "query": "切り花を長持ちさせる方法",
+    "status": "todo"
   }
 ]

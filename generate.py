@@ -32,8 +32,34 @@ ARTICLE_SCHEMA = {
         "description": {"type": "string"},
         "body_html": {"type": "string"},
         "tags": {"type": "array", "items": {"type": "string"}},
+        # 検索のリッチ表示(HowTo)用: 手順を name/text で構造化
+        "steps": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "text": {"type": "string"},
+                },
+                "required": ["name", "text"],
+                "additionalProperties": False,
+            },
+        },
+        # 検索のリッチ表示(FAQ)用: よくある質問
+        "faqs": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "q": {"type": "string"},
+                    "a": {"type": "string"},
+                },
+                "required": ["q", "a"],
+                "additionalProperties": False,
+            },
+        },
     },
-    "required": ["title", "description", "body_html", "tags"],
+    "required": ["title", "description", "body_html", "tags", "steps", "faqs"],
     "additionalProperties": False,
 }
 
@@ -47,7 +73,10 @@ SYSTEM_PROMPT = (
     "- 文章は丁寧語。1記事1500〜2500文字程度。\n"
     "- body_html は <h2><h3><p><ul><li><ol> のみで構成。"
     "導入→手順→コツ→よくある失敗→まとめ、の流れを意識する。\n"
-    "- title は32文字以内で検索キーワードを含める。description は記事要約120文字程度。"
+    "- title は32文字以内で検索キーワードを含める。description は記事要約120文字程度。\n"
+    "- steps には本文の手順を3〜7個、name(手順名・短く)とtext(具体的な説明・1〜2文)で入れる。"
+    "Googleの検索リッチ表示に使うので、実際にその通りやれば完了する順序で書く。\n"
+    "- faqs には読者がよく検索する疑問を2〜4個、q(質問)とa(80〜150文字の回答)で入れる。"
 )
 
 
@@ -96,6 +125,14 @@ def demo_article(query):
             "<p>仕組みが動いていれば成功です。次は本番モードを試してみましょう。</p>"
         ),
         "tags": ["サンプル"],
+        "steps": [
+            {"name": "準備する", "text": "必要な道具をそろえます。"},
+            {"name": "実行する", "text": "手順どおりに作業します。"},
+            {"name": "仕上げる", "text": "最後に確認して完了です。"},
+        ],
+        "faqs": [
+            {"q": "これはサンプルですか？", "a": "はい。動作確認用の固定サンプル記事です。"},
+        ],
     }
 
 
@@ -110,13 +147,22 @@ def build_article_record(kw, content):
         "description": content["description"],
         "body_html": content["body_html"],
         "tags": content.get("tags", []),
+        "steps": content.get("steps", []),
+        "faqs": content.get("faqs", []),
         "date": today,
     }
 
 
 # ----------------- サイト生成 -----------------
 
-def page_shell(config, title, description, inner, canonical):
+def jsonld(obj):
+    """構造化データを<script>タグ文字列にして返す。"""
+    return ('<script type="application/ld+json">'
+            + json.dumps(obj, ensure_ascii=False)
+            + "</script>\n")
+
+
+def page_shell(config, title, description, inner, canonical, head_extra=""):
     site = config["site_title"]
     return f"""<!DOCTYPE html>
 <html lang="ja">
@@ -125,12 +171,14 @@ def page_shell(config, title, description, inner, canonical):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(description)}">
+<meta name="robots" content="index,follow">
 <link rel="canonical" href="{html.escape(canonical)}">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(description)}">
 <meta property="og:type" content="article">
+<meta property="og:site_name" content="{html.escape(site)}">
 <link rel="stylesheet" href="style.css">
-<!-- AdSense用: 審査通過後にここへ広告コードを貼る -->
+{head_extra}<!-- AdSense用: 審査通過後にここへ広告コードを貼る -->
 </head>
 <body>
 <header class="site-header">
@@ -149,9 +197,86 @@ def page_shell(config, title, description, inner, canonical):
 """
 
 
-def render_article_page(config, art):
+def related_articles(art, arts, limit=4):
+    """同じタグを多く共有する記事を優先し、足りなければ新着で補う。"""
+    others = [a for a in arts if a["slug"] != art["slug"]]
+    my_tags = set(art.get("tags", []))
+
+    def score(a):
+        return len(my_tags & set(a.get("tags", [])))
+
+    others.sort(key=lambda a: (score(a), a["date"], a["id"]), reverse=True)
+    return others[:limit]
+
+
+def render_faq_section(faqs):
+    if not faqs:
+        return ""
+    items = "".join(
+        f"<details class='faq-item'><summary>{html.escape(f['q'])}</summary>"
+        f"<p>{html.escape(f['a'])}</p></details>"
+        for f in faqs
+    )
+    return f"<section class='faq'><h2>よくある質問</h2>{items}</section>"
+
+
+def render_related_section(related):
+    if not related:
+        return ""
+    links = "".join(
+        f"<li><a href='{a['slug']}.html'>{html.escape(a['title'])}</a></li>"
+        for a in related
+    )
+    return f"<nav class='related'><h2>あわせて読みたい</h2><ul>{links}</ul></nav>"
+
+
+def article_structured_data(config, art, url):
+    """記事ページに埋め込む構造化データ(Article/HowTo/FAQ)をまとめて返す。"""
+    site = config["site_title"]
+    blocks = [jsonld({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": art["title"],
+        "description": art["description"],
+        "datePublished": art["date"],
+        "dateModified": art["date"],
+        "author": {"@type": "Organization", "name": config.get("author", site)},
+        "publisher": {"@type": "Organization", "name": site},
+        "mainEntityOfPage": url,
+        "inLanguage": "ja",
+    })]
+    steps = art.get("steps") or []
+    if steps:
+        blocks.append(jsonld({
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            "name": art["title"],
+            "description": art["description"],
+            "step": [
+                {"@type": "HowToStep", "position": i + 1,
+                 "name": s["name"], "text": s["text"]}
+                for i, s in enumerate(steps)
+            ],
+        }))
+    faqs = art.get("faqs") or []
+    if faqs:
+        blocks.append(jsonld({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {"@type": "Question", "name": f["q"],
+                 "acceptedAnswer": {"@type": "Answer", "text": f["a"]}}
+                for f in faqs
+            ],
+        }))
+    return "".join(blocks)
+
+
+def render_article_page(config, art, arts):
     url = f"{config['site_url']}/{art['slug']}.html"
     tags = "".join(f'<span class="tag">{html.escape(t)}</span>' for t in art["tags"])
+    faq_html = render_faq_section(art.get("faqs"))
+    related_html = render_related_section(related_articles(art, arts))
     inner = f"""
 <article>
   <p class="crumb"><a href="index.html">トップ</a> ＞ 記事</p>
@@ -161,10 +286,13 @@ def render_article_page(config, art):
   <div class="article-body">
   {art['body_html']}
   </div>
+  {faq_html}
+  {related_html}
   <p class="back"><a href="index.html">← 一覧へ戻る</a></p>
 </article>
 """
-    return page_shell(config, art["title"], art["description"], inner, url)
+    head_extra = article_structured_data(config, art, url)
+    return page_shell(config, art["title"], art["description"], inner, url, head_extra)
 
 
 def render_index(config, arts):
@@ -185,8 +313,16 @@ def render_index(config, arts):
 </ul>
 <p class="count">現在 {len(arts)} 記事を公開中（毎晩自動更新）</p>
 """
+    head_extra = jsonld({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": config["site_title"],
+        "description": config["site_description"],
+        "url": config["site_url"] + "/",
+        "inLanguage": "ja",
+    })
     return page_shell(config, config["site_title"], config["site_description"],
-                      inner, config["site_url"] + "/")
+                      inner, config["site_url"] + "/", head_extra)
 
 
 def render_sitemap(config, arts):
@@ -227,6 +363,13 @@ font-size:.72rem;padding:3px 8px;border-radius:20px;margin-right:6px}
 .article-body h3{margin-top:24px;font-size:1.05rem}
 .article-body ul,.article-body ol{padding-left:1.4em}
 .back{margin-top:40px}
+.faq{margin-top:40px}.faq h2{border-left:5px solid var(--accent);padding-left:12px;font-size:1.2rem}
+.faq-item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:10px 0}
+.faq-item summary{font-weight:700;cursor:pointer}
+.faq-item p{margin:10px 0 0;color:#555}
+.related{margin-top:40px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.related h2{font-size:1.1rem;margin-top:0}
+.related ul{margin:0;padding-left:1.2em}.related li{margin:6px 0}
 .site-footer{border-top:1px solid var(--line);padding:24px 18px;text-align:center;color:#999;font-size:.78rem}
 """
 
@@ -243,7 +386,7 @@ def build_site(config):
         encoding="utf-8")
     for a in arts:
         (DOCS / f"{a['slug']}.html").write_text(
-            render_article_page(config, a), encoding="utf-8")
+            render_article_page(config, a, arts), encoding="utf-8")
     print(f"[build] サイトを生成: {len(arts)} 記事")
 
 
