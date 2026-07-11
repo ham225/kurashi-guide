@@ -162,6 +162,23 @@ def jsonld(obj):
             + "</script>\n")
 
 
+def ga4_snippet(config):
+    """GA4計測タグ。config.json の ga_measurement_id が空なら何も出さない。"""
+    gid = config.get("ga_measurement_id", "")
+    if not gid:
+        return ""
+    safe_gid = html.escape(gid)
+    return (
+        f'<script async src="https://www.googletagmanager.com/gtag/js?id={safe_gid}"></script>\n'
+        "<script>\n"
+        "window.dataLayer = window.dataLayer || [];\n"
+        "function gtag(){dataLayer.push(arguments);}\n"
+        "gtag('js', new Date());\n"
+        f"gtag('config', '{safe_gid}');\n"
+        "</script>\n"
+    )
+
+
 def page_shell(config, title, description, inner, canonical, head_extra=""):
     site = config["site_title"]
     return f"""<!DOCTYPE html>
@@ -178,7 +195,7 @@ def page_shell(config, title, description, inner, canonical, head_extra=""):
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="{html.escape(site)}">
 <link rel="stylesheet" href="style.css">
-{head_extra}<!-- AdSense用: 審査通過後にここへ広告コードを貼る -->
+{ga4_snippet(config)}{head_extra}<!-- AdSense用: 審査通過後にここへ広告コードを貼る -->
 </head>
 <body>
 <header class="site-header">
